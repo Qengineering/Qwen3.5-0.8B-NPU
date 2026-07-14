@@ -116,7 +116,11 @@ $ cd ../include
 $ sudo cp ./*.h /usr/local/include
 ```
 
-Your rkllm model must match the library. If you use a model synthesized with the previous 1.2.3 rkllm library, and run it with the latest 1.3.0, you will get a malfunction. The internal Byte-Pair Encoding (BPE) dictionary parsing gets misaligned. 
+Your rkllm model must match the library.<br><br>
+<img width="818" height="219" alt="RK_OK2" src="https://github.com/user-attachments/assets/cabb346b-a9fa-4c4f-9b3e-1ff785ce45fd" /><br><br>
+If you use a model synthesized with the previous 1.2.3 rkllm library and run it with the latest 1.3.0, you will get a malfunction. The internal Byte-Pair Encoding (BPE) dictionary parsing gets misaligned.<br><br>
+<img width="817" height="219" alt="RK_ERROR2" src="https://github.com/user-attachments/assets/bc9fad2a-8a1f-44f9-ab04-f834bb243f4c" />
+<br> 
 
 ### Download the LLM and VLM model.
 The next step is downloading the models.<br>
@@ -191,6 +195,12 @@ Video Sequence Mode (Passing multiple frames):
 ./VLM_VIDEO_NPU ./models/qwen3.5-0.8b-vision_rk3588.rknn ./models/qwen3.5-0.8b_w8a8_rk3588.rkllm ./frame1.jpg ./frame2.jpg ./frame3.jpg
 
 ```
+##### ❗Showstopper❗
+To process video input, individual frames are first extracted. The VLM converts each frame into embeddings, which are then transformed into vision tokens.<br>
+Even on a desktop PC, this process places a heavy load on memory and CUDA resources. It’s therefore no surprise that the Rock 5C, with its more limited hardware, struggles even more.<br>
+Each vision token corresponds to about 200 tokens, strongly limiting the number of frames processed per video. Therefore, the video is subsampled, and evenly spaced frames are extracted for processing by Qwen3.5.<br>
+For reference, each vision token occupies around 20 MB of RAM — a detail worth keeping in mind when working on systems with limited memory.<br>
+Keep also in mind that after loading the models, each frame has to be tokenised, which takes about 0.9 seconds per frame.
 
 ## Using the app
 
@@ -288,7 +298,11 @@ std::cout << "\nLLM Answer: " << output_str << std::endl;
 | ![Pizza_S](https://github.com/user-attachments/assets/26fd5da3-f491-4b48-978a-14eae0819247) |**User**: \<image\>What are the ingredients I need to make this?<br>**Answer**: To make this delicious-looking pizza — a **basil, mozzarella, tomato-based pizza with charred crust** — you’ll need these key ingredients:<br><br>🍕 **Core Ingredients:**<br>1. **Pizza Dough (or Pre-made Pizza)**<br>- Use a high-quality dough (like Italian or American) for a crispy, golden-brown crust.<br>- Optional: Add flour, salt, and optional yeast or baking powder for texture.<br><br>2. **Tomato Sauce**<br>- Fresh or canned tomato sauce (1–2 cups).<br>- For depth of flavor and color.<br><br>3. **Mozzarella Cheese**<br>- Mozzarella cheese (e.g., San Marzano, San Pellegrino, or regular Italian mozzarella) — about ½ to ¾ cup.<br>- Should be melted and bubbly for that gooey center.<br><br>4. **Fresh Basil Leaves**<br>- A generous handful of fresh basil (about 1–2 cups).<br>- Adds vibrant green color and aroma.<br><br> 🍅 **Optional Enhancements**:<br><br>- **Garlic Powder or Fresh Garlic**: For extra flavor (optional)<br>- **Black Pepper**: For heat (optional)<br>- **Onion Grits or Onion Rings**: For texture (optional)<br>- **Parsley or Cilantro**: For a lighter touch (optional)<br><br>🧊 **Optional**:<br>- **Breadcrumbs or Crusty Bread**: To add crunch and moisture (optional)<br>- **Parmesan Cheese**: For extra richness on top (optional)<br><br>💡 **Pro Tips**:<br>- Let the pizza rest for 10–15 minutes before serving to let flavors meld.<br>- Use a well-oiled cast iron skillet or oven-safe pan for even cooking and browning.<br>- Bake at 425°F (220°C) until golden brown — avoid overcooking!<br><br>📝 **Quick Recipe Summary**:<br><br>> 1 cup fresh basil, chopped <br>> ½ cup mozzarella cheese, shredded <br>> ¼ cup tomato sauce <br>> 1–2 cups fresh basil leaves <br>> 1 tbsp garlic powder (optional) <br>> Baked at 425°F for 8–10 minutes until golden and bubbly<br><br>Enjoy your homemade or well-prepared pizza — it’s the perfect start to any day! 🍕🌿<br><br>**User**:What is the first step?<br>**Answer**:The **first step** in making this pizza is:<br><br>> **Prepare the ingredients and equipment.**<br>This includes:<br>- Gathering fresh basil leaves, mozzarella cheese, tomato sauce, and any optional toppings like garlic or breadcrumbs.<br>- Having a well-oiled cast iron skillet ready for baking.<br>- Checking your oven temperature (425°F / 220°C is ideal).<br>- Ensuring the pizza dough is ready to use if you’re using pre-made dough instead of making it from scratch.<br>Once these are done, you can proceed to **bake the pizza** in the oven for about 8–10 minutes until golden brown and bubbly on top.<br>Let me know if you’d like a full recipe or tips for success! 🍕|
 | ![Titanic_S](https://github.com/user-attachments/assets/bf6da76c-c9a4-41c6-bea1-2b4411dd4013) |**User**: \<image\>Which movie is this?<br>**Answer**: This image is from the 2019 romantic comedy film **“The Great Gatsby”** (also known as *Gatsby*).<br><br>**Key visual clues:**<br>- The couple — Jay Gatsby and Daisy Buchanan — are standing on a boat or dock, with dramatic lighting suggesting sunset or sunrise.<br>- Their expressions and body language convey romance and longing, which is central to the film’s emotional core.<br>- The background shows a vast horizon with warm tones (orange/pink sky), typical of the movie’s cinematography during its peak romantic moments.<br><br>While there are other films featuring similar themes (like *The Great Gatsby* itself or *Gone Girl*), this specific scene — with the couple on what appears to be a boat at twilight — is most famously associated with **_The Great Gatsby_**.<br><br>✅ Final Answer: **_The Great Gatsby_**|
 
+
 ## Video example.
+![Sequence](https://github.com/user-attachments/assets/1e6af4e2-cdc4-4e22-868a-82e3df34fbb7)<br>
+**User**: \<video\> Describe the video.<br>
+**Answer**: The video shows a martial arts training session in an indoor dojo or gymnasium with tatami mats on the floor and light blue walls adorned with Chinese calligraphy. A person dressed in traditional black attire is performing various kicks and movements, including a high kick and a low kick, demonstrating flexibility and power typical of karate or judo techniques. Another individual lies prone on the mat near the wall, possibly observing or preparing for an action. The setting appears calm and focused, with natural light coming from windows in the background.<br>
 ## LLM example.
 Despite Qwen got it all wrong, we still have the nice Markdown makeup of the answer!<br><br>
 **User**: Can you make me a C++ call that embeds the Pythagorean theorem?<br>
