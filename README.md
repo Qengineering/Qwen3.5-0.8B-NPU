@@ -124,7 +124,7 @@ If you use a model synthesized with the previous 1.2.3 rkllm library and run it 
 
 ### Download the LLM and VLM model.
 The next step is downloading the models.<br>
-Both can be downloaded from our Hugging Face page.<br>
+Both can be downloaded from our [Hugging Face page](https://huggingface.co/Qengineering/Qwen3.5-0.8B-rk3588).<br>
 - qwen3.5-0.8b_w8a8_rk3588.rkllm
 - qwen3.5-0.8b-vision_rk3588.rknn
 
