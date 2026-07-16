@@ -243,7 +243,7 @@ bool RK35llm::LoadModel(const std::string& VLMmodel, const std::string& LLMmodel
 //----------------------------------------------------------------------------------------
 void RK35llm::LoadImage(const cv::Mat& img)
 {
-    if (llmHandle) rkllm_clear_kv_cache(llmHandle, 1, nullptr, nullptr);
+    if (llmHandle) rkllm_clear_kv_cache(llmHandle, 0, nullptr, nullptr);
     
     is_video = false;
     current_img_count = 1;
@@ -270,7 +270,7 @@ void RK35llm::LoadVideoFrames(const std::vector<cv::Mat>& frames)
 {
     if (frames.empty()) return;
     
-    if (llmHandle) rkllm_clear_kv_cache(llmHandle, 1, nullptr, nullptr);
+    if (llmHandle) rkllm_clear_kv_cache(llmHandle, 0, nullptr, nullptr);
     
     is_video = true;
     current_img_count = frames.size();
@@ -310,7 +310,7 @@ std::string RK35llm::Ask(const std::string& Question)
     }
 
     if (Question == "clear") {
-        rkllm_clear_kv_cache(llmHandle, 1, nullptr, nullptr);
+        rkllm_clear_kv_cache(llmHandle, 0, nullptr, nullptr);
         current_img_count = 0;
         return Str;
     }
